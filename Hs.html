@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Real Login</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #111;
+      color: white;
+      padding-top: 40px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      width: 250px;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .box {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #444;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🔥 Firebase Real Login System</h2>
+
+<div class="box">
+
+  <h3>Email Login</h3>
+  <input id="email" placeholder="Email"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button onclick="signupEmail()">Sign Up</button>
+  <button onclick="loginEmail()">Login</button>
+
+</div>
+
+<br>
+
+<div class="box">
+
+  <h3>SMS Login (OTP)</h3>
+  <input id="phone" placeholder="+639XXXXXXXXX"><br>
+
+  <div id="recaptcha-container"></div>
+
+  <button onclick="sendCode()">Send Code</button><br>
+
+  <input id="code" placeholder="Enter OTP Code"><br>
+  <button onclick="verifyCode()">Verify</button>
+
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBcrLmoEPCFkpjOtBm1xCY9I-scoiS6Yac",
+    authDomain: "ikawyungnagshoplift-6d97b.firebaseapp.com",
+    projectId: "ikawyungnagshoplift-6d97b",
+    appId: "1:779233144342:web:64735e6291c8bf63ce8f37"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    'recaptcha-container',
+    { size: 'normal' }
+  );
+
+  let confirmationResult;
+
+  function signupEmail() {
+    auth.createUserWithEmailAndPassword(email.value, password.value)
+      .then(() => alert("Account created!"))
+      .catch(e => alert(e.message));
+  }
+
+  function loginEmail() {
+    auth.signInWithEmailAndPassword(email.value, password.value)
+      .then(() => alert("Logged in!"))
+      .catch(e => alert(e.message));
+  }
+
+  function sendCode() {
+    auth.signInWithPhoneNumber(phone.value, recaptchaVerifier)
+      .then(result => {
+        confirmationResult = result;
+        alert("OTP sent!");
+      })
+      .catch(e => alert(e.message));
+  }
+
+  function verifyCode() {
+    confirmationResult.confirm(code.value)
+      .then(() => alert("Phone verified!"))
+      .catch(() => alert("Wrong code"));
+  }
+</script>
+
+</body>
+</html>
